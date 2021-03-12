@@ -9,4 +9,18 @@ router.get("/:id", (req, res) => {
   return new SuccessResponse("success", req.params.id).send(res);
 });
 
+router.post("", (req, res) => {
+  Logger.info(`POST OK`);
+  return new SuccessResponse("success", "OK").send(res);
+});
+
+router.put("", (req, res) => {
+  Logger.info(`PUT OK`);
+  return new SuccessResponse("success", "OK").send(res);
+});
+
+router.delete("/:id", (req, res) => {
+  Logger.info(`DELETE OK`);
+  return new SuccessResponse("success", "OK").send(res);
+});
 export default router;
