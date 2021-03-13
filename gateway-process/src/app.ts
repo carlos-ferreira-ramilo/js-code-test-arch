@@ -11,6 +11,10 @@ process.on("uncaughtException", (e) => {
 // Server
 const app = express();
 
+app.use(express.urlencoded({ extended: false }));
+
+app.use(express.json());
+
 // Routes
 app.use("/api", routes);
 
