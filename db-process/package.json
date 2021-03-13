@@ -1,0 +1,29 @@
+{
+    "name": "db-process",
+    "version": "1.0.0",
+    "description": "DB process for js-code-test-arch",
+    "author": "Carlos Ferreira Ramilo",
+    "license": "MIT",
+    "main": "server.ts",
+    "scripts": {
+        "start": "npm run build && npm run serve",
+        "serve": "node -r dotenv/config build/server.js",
+        "build": "npm run build-ts",
+        "build-ts": "tsc",
+        "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
+        "watch-node": "nodemon -r dotenv/config build/server.js",
+        "watch-ts": "tsc -w"
+    },
+    "keywords": [
+        "nodejs"
+    ],
+    "dependencies": {
+        "winston": "^3.3.3",
+        "winston-daily-rotate-file": "^4.5.1"
+    },
+    "devDependencies": {
+        "@types/node": "^14.14.34",
+        "concurrently": "^6.0.0",
+        "dotenv": "^8.2.0"
+    }
+}
