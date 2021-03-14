@@ -1,21 +1,41 @@
+import io from "../socket";
 import Logger from "../core/Logger";
+import sockets from "../socket";
 
 export default class UserService {
-  constructor() {}
-
-  getUser(userId: String) {
-    Logger.debug(`UserService. getUser userId: ${userId}`);
+  async getUser(userId: String) {
+    let getResult = await new Promise((resolve, reject) => {
+      sockets[0].emit("getUser", userId, (result) => {
+        return resolve(result);
+      });
+    });
+    return getResult;
   }
 
-  createUser(user) {
-    Logger.debug(`UserService. createUser user: ${user.id}`);
+  async createUser(user) {
+    let createResult = await new Promise((resolve, reject) => {
+      sockets[0].emit("createUser", user, (result) => {
+        return resolve(result);
+      });
+    });
+    return createResult;
   }
 
-  updateUser(user) {
-    Logger.debug(`UserService. updateUser user: ${user.id}`);
+  async updateUser(user) {
+    let updateResult = await new Promise((resolve, reject) => {
+      sockets[0].emit("updateUser", user, (result) => {
+        return resolve(result);
+      });
+    });
+    return updateResult;
   }
 
-  deleteUser(userId: String) {
-    Logger.debug(`UserService. deleteUser userId: ${userId}`);
+  async deleteUser(userId: String) {
+    let deleteResult = await new Promise((resolve, reject) => {
+      sockets[0].emit("deleteUser", userId, (result) => {
+        return resolve(result);
+      });
+    });
+    return deleteResult;
   }
 }
