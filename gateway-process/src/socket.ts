@@ -10,8 +10,16 @@ serverSocket.listen(socketPort, function () {
   Logger.info(`Socket Server started. Port: ${socketPort}`);
 });
 
-io.sockets.on("connection", (socket) => {
-  socket.send("Hello!");
+io.on("connection", (socket) => {
+  Logger.info(`Cliente conectado.`);
+
+  socket.emit("servermsg", {
+    data: "Hi",
+  });
+
+  socket.on("clientmsg", (mensaje) => {
+    Logger.info(`Recibido mensaje: ${JSON.stringify(mensaje)}`);
+  });
 });
 
 export default io;
