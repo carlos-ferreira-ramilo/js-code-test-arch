@@ -2,14 +2,14 @@ import Logger from "./core/Logger";
 import express, { Request, Response, NextFunction } from "express";
 import routes from "./routes";
 import { NotFoundError, ApiError, InternalError } from "./core/ApiError";
-import { environment } from "./config";
-
-process.on("uncaughtException", (e) => {
-  Logger.error(e);
-});
+import { environment, restPort } from "./config";
+import http from "http";
+import path from "path";
 
 // Server
 const app = express();
+
+app.use(express.static(path.resolve(__dirname, "../public")));
 
 app.use(express.urlencoded({ extended: false }));
 
@@ -34,5 +34,11 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     ApiError.handle(new InternalError(), res);
   }
 });
+
+app
+  .listen(restPort, () => {
+    Logger.info(`Rest Server started. Port: ${restPort}`);
+  })
+  .on(`error`, (e) => Logger.error(e));
 
 export default app;

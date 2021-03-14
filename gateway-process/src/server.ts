@@ -1,9 +1,8 @@
-import app from "./app";
-import { port } from "./config";
 import Logger from "./core/Logger";
 
-app
-  .listen(port, () => {
-    Logger.info(`Server started. Port: ${port}`);
-  })
-  .on(`error`, (e) => Logger.error(e));
+process.on("uncaughtException", (e) => {
+  Logger.error(e);
+});
+
+require("./app");
+require("./socket");
