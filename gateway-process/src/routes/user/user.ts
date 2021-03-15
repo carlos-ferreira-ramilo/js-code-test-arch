@@ -2,7 +2,11 @@ import express from "express";
 import Logger from "../../core/Logger";
 import validator, { ValidationSource } from "../../helpers/validator";
 import schema from "./schema";
-import { SuccessResponse, InternalErrorResponse } from "../../core/ApiResponse";
+import {
+  SuccessResponse,
+  InternalErrorResponse,
+  NotFoundResponse,
+} from "../../core/ApiResponse";
 import UserService from "../../services/UserService";
 
 const router = express.Router();
@@ -16,7 +20,7 @@ router.get(
     if (result.success) {
       return new SuccessResponse("success", result.data).send(res);
     }
-    return new InternalErrorResponse(result.err).send(res);
+    return new NotFoundResponse(result.err).send(res);
   }
 );
 

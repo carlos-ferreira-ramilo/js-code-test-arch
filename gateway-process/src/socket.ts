@@ -3,34 +3,45 @@ import Logger from "./core/Logger";
 import expressSocket from "express";
 import { Socket } from "socket.io";
 import _ from "lodash";
+import DbInstanceDto from "./types/DbInstanceDto";
 
 const appSocket = expressSocket();
 const serverSocket = require("http").Server(appSocket);
 const io = require("socket.io")(serverSocket);
 
-const sockets: Socket[] = [];
+const dbInstances: DbInstanceDto[] = [];
 
 serverSocket.listen(socketPort, function () {
   Logger.info(`Socket Server started. Port: ${socketPort}`);
 });
 
 io.on("connection", (socket: Socket) => {
-  sockets.push(socket);
   Logger.info(`Cliente conectado. Socket ID: ${socket.id}`);
 
-  socket.emit("servermsg", {
-    data: "Hi",
-  });
-
-  socket.on("clientmsg", (mensaje) => {
-    Logger.info(`Recibido mensaje: ${JSON.stringify(mensaje)}`);
-  });
-
   socket.on("disconnect", () => {
-    _.remove(sockets, function (socketItem) {
-      return socketItem === socket;
-    });
+    Logger.info(`Deregistering DB Instance. Socket ID [${socket.id}]`);
+    let dbInstance = _.find(
+      dbInstances,
+      (itemDbInstance) => itemDbInstance.socket === socket
+    );
+    if (dbInstance) {
+      dbInstance.up = false;
+      Logger.info(`Deregistered DB Instance [${dbInstance.id}]`);
+    }
+  });
+
+  socket.on("registerDBInstance", (dbInstanceId: String) => {
+    Logger.info(`Registering DB Instance [${dbInstanceId}]`);
+    let dbInstance = _.find(
+      dbInstances,
+      (itemDbInstance) => itemDbInstance.id === dbInstanceId
+    );
+    if (dbInstance) {
+      dbInstance.socket = socket;
+      dbInstance.up = true;
+    }
+    dbInstances.push(new DbInstanceDto(dbInstanceId, socket, true));
   });
 });
 
-export default sockets;
+export default dbInstances;
