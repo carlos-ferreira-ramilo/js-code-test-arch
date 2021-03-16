@@ -1,6 +1,5 @@
 import Logger from "../core/Logger";
 import level from "level-rocksdb";
-import socketSecondary from "../server";
 
 export default class UserRepo {
   private primary: boolean;

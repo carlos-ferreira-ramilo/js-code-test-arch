@@ -16,58 +16,58 @@ const socket = io(socketServerURL);
 let socketSecondary: Socket = null;
 
 socket.on("connect", () => {
-  Logger.info(`db-process socket connect to the server.`);
+  Logger.info(`Connected to the server.`);
   socket.emit("registerDBInstance", dbInstanceId);
 });
 
 socket.on("disconnect", () => {
-  Logger.info(`db-process socket disconnect from the server.`);
+  Logger.info(`Disconnect from the server.`);
 });
 
 socket.on("getUser", async (userId, callback) => {
-  Logger.debug(`Recibido getUser. userId: ${userId}`);
+  Logger.debug(`On getUser. userId: ${userId}`);
   let result = await UserPrimaryService.findById(userId);
   return callback(result);
 });
 
 socket.on("createUser", async (user, callback) => {
-  Logger.debug(`Recibido createUser. User: ${user}`);
+  Logger.debug(`On createUser. User: ${JSON.stringify(user)}`);
   let result = await UserPrimaryService.create(user);
   return callback(result);
 });
 
 socket.on("updateUser", async (user, callback) => {
-  Logger.debug(`Recibido updateUser. User: ${user}`);
+  Logger.debug(`On updateUser. User: ${JSON.stringify(user)}`);
   let result = await UserPrimaryService.update(user);
   return callback(result);
 });
 
 socket.on("deleteUser", async (userId, callback) => {
-  Logger.debug(`Recibido deleteUser. userId: ${userId}`);
+  Logger.debug(`On deleteUser. userId: ${userId}`);
   let result = await UserPrimaryService.delete(userId);
   return callback(result);
 });
 
 socket.on("getUserSecondary", async (userId, callback) => {
-  Logger.debug(`Recibido getUserSecondary. userId: ${userId}`);
+  Logger.debug(`On getUserSecondary. userId: ${userId}`);
   let result = await UserSecondaryService.findById(userId);
   return callback(result);
 });
 
 socket.on("createUserSecondary", async (user, callback) => {
-  Logger.debug(`Recibido createUserSecondary. User: ${user}`);
+  Logger.debug(`On createUserSecondary. User: ${JSON.stringify(user)}`);
   let result = await UserSecondaryService.create(user);
   return callback(result);
 });
 
 socket.on("updateUserSecondary", async (user, callback) => {
-  Logger.debug(`Recibido updateUserSecondary. User: ${user}`);
+  Logger.debug(`On updateUserSecondary. User: ${JSON.stringify(user)}`);
   let result = await UserSecondaryService.update(user);
   return callback(result);
 });
 
 socket.on("deleteUserSecondary", async (userId, callback) => {
-  Logger.debug(`Recibido deleteUserSecondary. userId: ${userId}`);
+  Logger.debug(`On deleteUserSecondary. userId: ${userId}`);
   let result = await UserSecondaryService.delete(userId);
   return callback(result);
 });

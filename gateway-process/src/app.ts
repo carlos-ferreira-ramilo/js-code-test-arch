@@ -3,7 +3,6 @@ import express, { Request, Response, NextFunction } from "express";
 import routes from "./routes";
 import { NotFoundError, ApiError, InternalError } from "./core/ApiError";
 import { environment, restPort } from "./config";
-import http from "http";
 import path from "path";
 
 // Server

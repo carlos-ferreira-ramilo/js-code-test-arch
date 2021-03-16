@@ -4,14 +4,9 @@ export default class DbInstanceDto {
   id: string;
   socket: Socket;
   up: boolean;
-  secondary: DbInstanceDto;
+  secondary: Socket;
 
-  constructor(
-    id: string,
-    socket: Socket,
-    up: boolean,
-    secondary: DbInstanceDto
-  ) {
+  constructor(id: string, socket: Socket, up: boolean, secondary: Socket) {
     this.id = id;
     this.socket = socket;
     this.up = up;

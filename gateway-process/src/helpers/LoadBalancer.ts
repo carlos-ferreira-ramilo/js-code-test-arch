@@ -1,4 +1,3 @@
-import DbInstanceDto from "DbInstanceDto";
 import dbInstances from "../socket";
 
 export default class LoadBalancer {

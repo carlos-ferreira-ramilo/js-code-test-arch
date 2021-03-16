@@ -1,14 +1,17 @@
 import Logger from "../core/Logger";
 import LoadBalancer from "../helpers/loadBalancer";
 import dbInstances from "../socket";
-import DbInstanceDto from "../types/DbInstanceDto";
+import _ from "lodash";
+import { Socket } from "socket.io";
 
 export default class UserService {
   async getUser(userId: string) {
+    Logger.debug(`UserService.getUser ${userId}`);
     return await this.findUserInDbProcesses(userId);
   }
 
   async createUser(user) {
+    Logger.debug(`UserService.createUser ${JSON.stringify(user)}`);
     let findUserResult: any = await this.findUserInDbProcesses(user.id);
     if (findUserResult.success) {
       return { success: false, err: "User already exists" };
@@ -20,36 +23,41 @@ export default class UserService {
       });
     });
     if (instanceToEmit.secondary) {
-      instanceToEmit.secondary.socket.emit("createUserSecondary", user);
+      instanceToEmit.secondary.emit("createUserSecondary", user);
     }
     return createResult;
   }
 
   async updateUser(user) {
+    Logger.debug(`UserService.updateUser ${JSON.stringify(user)}`);
     return await this.updateUserInDbProcesses(user);
   }
 
   async deleteUser(userId: string) {
+    Logger.debug(`UserService.deleteUser ${userId}`);
     return await this.deleteUserInDbProcesses(userId);
   }
 
   private findUserInDbProcesses(userId: string) {
     return new Promise((resolve, reject) => {
-      let dbInstance: DbInstanceDto;
+      let socket: Socket;
       let sendEvent: string;
       let idxBackup: number;
       let idxSocketsSend = 0;
       let idxSocketsResp = 0;
       for (const idx in dbInstances) {
-        if (dbInstances[idx].secondary && dbInstances[idx].secondary.up) {
-          dbInstance = dbInstances[idx].secondary;
+        if (
+          dbInstances[idx].secondary &&
+          this.isSocketUp(dbInstances[idx].secondary)
+        ) {
+          socket = dbInstances[idx].secondary;
           sendEvent = "getUserSecondary";
         } else {
-          dbInstance = dbInstances[idx];
+          socket = dbInstances[idx].socket;
           sendEvent = "getUser";
         }
         idxSocketsSend++;
-        dbInstance.socket.emit(sendEvent, userId, (result) => {
+        socket.emit(sendEvent, userId, (result) => {
           if (result.success) {
             return resolve(result);
           }
@@ -68,7 +76,7 @@ export default class UserService {
       let idxSocketsResp = 0;
       for (const idx in dbInstances) {
         if (dbInstances[idx].secondary) {
-          dbInstances[idx].secondary.socket.emit("updateUserSecondary", user);
+          dbInstances[idx].socket.emit("updateUserSecondary", user);
         }
         idxSocketsSend++;
         dbInstances[idx].socket.emit("updateUser", user, (result) => {
@@ -90,7 +98,7 @@ export default class UserService {
       let idxSocketsResp = 0;
       for (const idx in dbInstances) {
         if (dbInstances[idx].secondary) {
-          dbInstances[idx].secondary.socket.emit("deleteUserSecondary", userId);
+          dbInstances[idx].socket.emit("deleteUserSecondary", userId);
         }
         idxSocketsSend++;
         dbInstances[idx].socket.emit("deleteUser", userId, (result) => {
@@ -104,5 +112,16 @@ export default class UserService {
         });
       }
     });
+  }
+
+  private isSocketUp(socket: Socket) {
+    let dbInstance = _.find(
+      dbInstances,
+      (itemDbInstance) => itemDbInstance.socket === socket
+    );
+    if (dbInstance) {
+      return dbInstance.up;
+    }
+    return false;
   }
 }
