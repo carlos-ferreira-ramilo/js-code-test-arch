@@ -30,7 +30,7 @@ io.on("connection", (socket: Socket) => {
     }
   });
 
-  socket.on("registerDBInstance", (dbInstanceId: String) => {
+  socket.on("registerDBInstance", (dbInstanceId: string) => {
     Logger.info(`Registering DB Instance [${dbInstanceId}]`);
     let dbInstance = _.find(
       dbInstances,
@@ -39,8 +39,16 @@ io.on("connection", (socket: Socket) => {
     if (dbInstance) {
       dbInstance.socket = socket;
       dbInstance.up = true;
+    } else {
+      dbInstances.push(
+        new DbInstanceDto(
+          dbInstanceId,
+          socket,
+          true,
+          dbInstances.length === 0 ? null : dbInstances[dbInstances.length - 1]
+        )
+      );
     }
-    dbInstances.push(new DbInstanceDto(dbInstanceId, socket, true));
   });
 });
 

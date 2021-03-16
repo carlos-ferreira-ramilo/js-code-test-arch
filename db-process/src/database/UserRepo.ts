@@ -1,22 +1,33 @@
 import Logger from "../core/Logger";
 import level from "level-rocksdb";
-
-const db = level("./mydb");
+import socketSecondary from "../server";
 
 export default class UserRepo {
-  public static async findById(userId: String) {
+  private primary: boolean;
+  private db: any;
+
+  constructor(primary: boolean = true) {
+    this.primary = primary;
+    if (this.primary) {
+      this.db = level("./dbprimary");
+    } else {
+      this.db = level("./dbsecondary");
+    }
+  }
+
+  public async findById(userId: String) {
     try {
-      let user = await db.get(userId);
+      let user = await this.db.get(userId);
       return { success: true, data: JSON.parse(user) };
     } catch (err) {
       return { success: false, err: err.message };
     }
   }
 
-  public static async create(user: any) {
+  public async create(user: any) {
     if ((await this.findById(user.id)).success === false) {
       try {
-        await db.put(user.id, JSON.stringify(user));
+        await this.db.put(user.id, JSON.stringify(user));
         return { success: true };
       } catch (err) {
         return { success: false, err: err.message };
@@ -25,10 +36,10 @@ export default class UserRepo {
     return { success: false, err: "User already exists" };
   }
 
-  public static async update(user: any) {
+  public async update(user: any) {
     if ((await this.findById(user.id)).success === true) {
       try {
-        await db.put(user.id, JSON.stringify(user));
+        await this.db.put(user.id, JSON.stringify(user));
         return { success: true };
       } catch (err) {
         return { success: false, err: err.message };
@@ -37,9 +48,9 @@ export default class UserRepo {
     return { success: false, err: "User does not exist" };
   }
 
-  public static async delete(userId: String) {
+  public async delete(userId: String) {
     try {
-      await db.del(userId);
+      await this.db.del(userId);
       return { success: true };
     } catch (err) {
       return { success: false, err: err.message };

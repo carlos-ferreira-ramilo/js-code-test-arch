@@ -1,13 +1,20 @@
 import { Socket } from "socket.io";
 
 export default class DbInstanceDto {
-  id: String;
+  id: string;
   socket: Socket;
   up: boolean;
+  secondary: DbInstanceDto;
 
-  constructor(id: String, socket: Socket, up: boolean) {
+  constructor(
+    id: string,
+    socket: Socket,
+    up: boolean,
+    secondary: DbInstanceDto
+  ) {
     this.id = id;
     this.socket = socket;
     this.up = up;
+    this.secondary = secondary;
   }
 }

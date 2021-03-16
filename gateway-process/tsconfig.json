@@ -4,6 +4,7 @@
     "noImplicitAny": false,
     "strict": true,
     "strictFunctionTypes": false,
+    "strictNullChecks": false,
     "noImplicitThis": false,
     // Search under node_modules for non-relative imports.
     "moduleResolution": "node",
