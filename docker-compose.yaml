@@ -1,0 +1,28 @@
+version: '3.5'
+services:
+    gateway:
+        image: carlos_ferreira_ramilo/gateway-process
+        container_name: gateway
+        restart: always
+        ports:
+            - 3001:3001
+            - 3002:3002
+        networks:
+            jscodenet:
+                aliases:
+                    - gateway
+    
+    db_0:
+        image: carlos_ferreira_ramilo/db-process
+        container_name: db_0
+        restart: always
+        networks:
+            jscodenet:
+                aliases:
+                    - db-0
+        environment:
+            - SOCKET_SERVER_URL=ws://gateway:3002
+
+networks:
+    jscodenet:
+        name: jscodenet
