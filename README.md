@@ -33,7 +33,7 @@ Los db_process usan rocksDB para la persistencia de los datos de usuarios. El si
 
 Cada proceso de base de datos contendrá su propia partición de base de datos, además de una réplica de la partición del proceso anterior. De este modo, si cae uno de los servidores, siempre tendremos una copia de respaldo en el servidor contiguo. Esto sigue siendo válido para n db_process:
 
-![n db-process](resources/images/dbschema.png)
+![n db-process](resources/images/dbscheman.png)
 
 La comunicación entre el gateway y los db_process se ha implementado mediante websockets, concretamente con la librearía socket.io. Esta decisión se basa en el hecho de que va a haber una comunicación constante entre todos los elementos. Mientras en el servicio REST que el gateway publica, lo esperado es tener que múltiples cliente que se conectan y desconectan esporádicamente para realizar las opearaciones CRUD, la comunicación entre los elementos de la solución va a ser continua, por lo que mediante los websockets vamos a conseguir ahorrar tiempos de conexión cada vez que se produce una de estas comunicaciones recurrentes (https://blog.feathersjs.com/http-vs-websockets-a-performance-comparison-da2533f13a77).
 
@@ -41,6 +41,7 @@ Se tiene en cuenta que al optar por los websockets, el escalado que podremos apl
 
 ### Operación de lectura
 Se lanza la lectura sobre las réplicas de cada servidor (en caso de estar caído alguno de los db_process, se lanza sobre la partición primaria).
+
 ![read operation](resources/images/dbschemaread.png)
 
 ### Operaciones de actualización
