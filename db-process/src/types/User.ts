@@ -11,6 +11,11 @@ export default class User {
     this.group = object.group;
   }
 
+  /**
+   * Partial update with the values in the user passed by parameter.
+   * @param user with data used to update this user.
+   * @returns this with the update values.
+   */
   public update(user: User): User {
     if (user.id) {
       this.id = user.id;
