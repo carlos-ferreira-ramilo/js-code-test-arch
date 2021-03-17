@@ -12,9 +12,9 @@ services:
                 aliases:
                     - gateway
     
-    db_0:
+    db-0:
         image: carlos_ferreira_ramilo/db-process
-        container_name: db_0
+        container_name: db-0
         restart: always
         networks:
             jscodenet:
@@ -22,6 +22,31 @@ services:
                     - db-0
         environment:
             - SOCKET_SERVER_URL=ws://gateway:3002
+            - DB_INSTANCE_ID=db-0
+
+    db-1:
+        image: carlos_ferreira_ramilo/db-process
+        container_name: db-1
+        restart: always
+        networks:
+            jscodenet:
+                aliases:
+                    - db-1
+        environment:
+            - SOCKET_SERVER_URL=ws://gateway:3002
+            - DB_INSTANCE_ID=db-1
+
+    db-2:
+        image: carlos_ferreira_ramilo/db-process
+        container_name: db-2
+        restart: always
+        networks:
+            jscodenet:
+                aliases:
+                    - db-2
+        environment:
+            - SOCKET_SERVER_URL=ws://gateway:3002
+            - DB_INSTANCE_ID=db-2
 
 networks:
     jscodenet:
