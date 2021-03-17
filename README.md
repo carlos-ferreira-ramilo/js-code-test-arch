@@ -53,16 +53,16 @@ Las operaciones de actualización se lanzan directamente sobre las particiones p
 	 - gateway-process:
 		 - En la carpeta gateway-process hay un Dockerfile con el que se puede generar la imagen docker:
 
-			```docker build -t carlos_ferreira_ramilo/gateway-process. ```
+			```docker build -t carlos_ferreira_ramilo/gateway-process . ```
 
 	- En la carpeta db-process hay un Dockerfile con el que se puede generar la imagen docker:
 
-			```docker build -t carlos_ferreira_ramilo/db-process. ```
+			```docker build -t carlos_ferreira_ramilo/db-process . ```
 
 - Docker-compose:
 	- Para lanzar la ejecución con Docker Compose, sobre la raíz del proyecto:
 
-			``` docker-compose up -d ```
+			```docker-compose up -d ```
 			
 	- Para parar un cotenedor para probar la resistencia a fallo de un servidor:
 
