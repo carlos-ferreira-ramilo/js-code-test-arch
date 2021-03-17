@@ -36,7 +36,7 @@ Cada proceso de base de datos contendrá su propia partición de base de datos, 
 
 ![n db-process](resources/images/dbschema.png)
 
-La comunicación entre el gateway y los db_process se ha implementado mediante websockets, concretamente con la librearía socket.io. Esta decisión se basa en el hecho de que va a haber una comunicación constante entre todos los elementos. Mientras en el servicio REST que el gateway publica, lo esperado es tener múltiples clientes que se conectan y desconectan esporádicamente para realizar las opearaciones CRUD, la comunicación entre los elementos de la solución va a ser continua, por lo que mediante los websockets vamos a conseguir ahorrar tiempos de conexión cada vez que se produce una de estas comunicaciones recurrentes (https://blog.feathersjs.com/http-vs-websockets-a-performance-comparison-da2533f13a77).
+La comunicación entre el gateway y los db_process se ha implementado mediante websockets, concretamente con la librearía socket.io. Esta decisión se basa en el hecho de que va a haber una comunicación constante entre todos los elementos. Mientras en el servicio REST que el gateway publica, lo esperado es tener que múltiples cliente que se conectan y desconectan esporádicamente para realizar las opearaciones CRUD, la comunicación entre los elementos de la solución va a ser continua, por lo que mediante los websockets vamos a conseguir ahorrar tiempos de conexión cada vez que se produce una de estas comunicaciones recurrentes (https://blog.feathersjs.com/http-vs-websockets-a-performance-comparison-da2533f13a77).
 
 Se tiene en cuenta que al optar por los websockets, el escalado que podremos aplicar será un escalado vertical. En todo caso, si fuera necesario, se podría optar por un escalado horizontal de entrada en el REST del gateway, definiendo clusters con n db_process asociados a cada gateway.
 
@@ -85,6 +85,21 @@ En el docker-composer.yaml se pueden configurar los puertos, que por defecto son
 	 - SOCKET_SERVER_URL: url del servidor websocket. Por defecto: ws://localhost:3002
 	 - DB_INSTANCE_ID: identificador de la instancia. Por defecto: db-0. No debe haber dos db-process con el mismo nombre
 
+#### Ejemplo búsqueda usuario que existe:
+![read operation](resources/images/readok.png)
+#### Ejemplo búsqueda usuario que no existe:
+![read operation](resources/images/readnok.png)
+#### Ejemplo crear usuario que no existe:
+![read operation](resources/images/createok.png)
+#### Ejemplo crear usuario que existe:
+![read operation](resources/images/createnok.png)
+#### Ejemplo actualizar usuario que existe:
+![read operation](resources/images/updateok.png)
+#### Ejemplo actualizar usuario que no existe:
+![read operation](resources/images/updatenok.png)
+#### Ejemplo borrar usuario:
+![read operation](resources/images/delete.png)
+
 ### gateway-process
 ![gateway](resources/images/gatewaytree.png)
 
@@ -103,3 +118,4 @@ En el docker-composer.yaml se pueden configurar los puertos, que por defecto son
 
  - Se ha optado por usar la librería socket.io, ya que era suficiente para el objetivo de esta prueba, teniendo en consideración lo comentado en (https://www.npmjs.com/package/level-rocksdb):
 ```Use this package to avoid having to explicitly install `rocksdb` when you want to use RocksDB with `levelup`. See also [`level`](https://github.com/Level/level) which does the same for LevelDB.```
+ 
