@@ -34,7 +34,7 @@ Los db_process usan rocksDB para la persistencia de los datos de usuarios. El si
 
 Cada proceso de base de datos contendrá su propia partición de base de datos, además de una réplica de la partición del proceso anterior. De este modo, si cae uno de los servidores, siempre tendremos una copia de respaldo en el servidor contiguo. Esto sigue siendo válido para n db_process:
 
-![n db-process](resources/images/dbscheman.png)
+![n db-process](resources/images/dbschema.png)
 
 La comunicación entre el gateway y los db_process se ha implementado mediante websockets, concretamente con la librearía socket.io. Esta decisión se basa en el hecho de que va a haber una comunicación constante entre todos los elementos. Mientras en el servicio REST que el gateway publica, lo esperado es tener que múltiples cliente que se conectan y desconectan esporádicamente para realizar las opearaciones CRUD, la comunicación entre los elementos de la solución va a ser continua, por lo que mediante los websockets vamos a conseguir ahorrar tiempos de conexión cada vez que se produce una de estas comunicaciones recurrentes (https://blog.feathersjs.com/http-vs-websockets-a-performance-comparison-da2533f13a77).
 
@@ -55,14 +55,14 @@ Las operaciones de actualización se lanzan directamente sobre las particiones p
 
 			```docker build -t carlos_ferreira_ramilo/gateway-process . ```
 
-	- En la carpeta db-process hay un Dockerfile con el que se puede generar la imagen docker:
+		- En la carpeta db-process hay un Dockerfile con el que se puede generar la imagen docker:
 
-			```docker build -t carlos_ferreira_ramilo/db-process . ```
+			```docker build -t carlos_ferreira_ramilo/db-process .```
 
 - Docker-compose:
 	- Para lanzar la ejecución con Docker Compose, sobre la raíz del proyecto:
 
-			```docker-compose up -d ```
+		``` docker-compose up -d ```
 			
 	- Para parar un cotenedor para probar la resistencia a fallo de un servidor:
 
