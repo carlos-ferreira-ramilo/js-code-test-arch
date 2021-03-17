@@ -1,20 +1,21 @@
 # js-code-test-arch
 
 Proyecto de prueba de implementación de un ecosistema de microservicios para la implementación de CRUD sobre una entidad Usuario con el siguiente esquema:
-
+``` 
 {
     id: '13AE742', // an UUID string
     name: 'John Doe',
     email: 'john.doe@gmail.com',
     group: 3
 }
-
+```
 La solución provee un servicio REST con las siguientes operaciones:
-
+```
 GET /api/user/{userID} 			(READs an user)
 POST /api/user/ 			(CREATEs an user)
 PUT /api/user/ 				(UPDATEs an user) 
 DELETE /api/user/{userID} 		(DELETEs an user)
+```
 
 La operación de actualización será una actualización parcial.
 
@@ -51,16 +52,25 @@ Las operaciones de actualización se lanzan directamente sobre las particiones p
  - Creación de las imágenes:
 	 - gateway-process:
 		 - En la carpeta gateway-process hay un Dockerfile con el que se puede generar la imagen docker:
-			 docker build -t carlos_ferreira_ramilo/gateway-process .
-		 - En la carpeta db-process hay un Dockerfile con el que se puede generar la imagen docker:
-			 docker build -t carlos_ferreira_ramilo/db-process .
+
+			```docker build -t carlos_ferreira_ramilo/gateway-process. ```
+
+	- En la carpeta db-process hay un Dockerfile con el que se puede generar la imagen docker:
+
+			```docker build -t carlos_ferreira_ramilo/db-process. ```
+
 - Docker-compose:
 	- Para lanzar la ejecución con Docker Compose, sobre la raíz del proyecto:
-		docker-compose up -d
+
+			``` docker-compose up -d ```
+			
 	- Para parar un cotenedor para probar la resistencia a fallo de un servidor:
-		docker-compose stop db-1; sleep 60; docker-compose start db-1;
+
+		``` docker-compose stop db-1; sleep 60; docker-compose start db-1;```
+				
 	- Para parar la ejecución de Docker Compose:
-		docker-compose down
+		
+		``` docker-compose down ``` 
 
 ### gateway-process
 ![gateway](resources/images/gatewaytree.png)
