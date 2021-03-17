@@ -4,15 +4,11 @@ import { Response } from "express";
 enum StatusCode {
   SUCCESS = "10000",
   FAILURE = "10001",
-  RETRY = "10002",
-  INVALID_ACCESS_TOKEN = "10003",
 }
 
 enum ResponseStatus {
   SUCCESS = 200,
   BAD_REQUEST = 400,
-  UNAUTHORIZED = 401,
-  FORBIDDEN = 403,
   NOT_FOUND = 404,
   INTERNAL_ERROR = 500,
 }
@@ -45,12 +41,6 @@ abstract class ApiResponse {
   }
 }
 
-export class AuthFailureResponse extends ApiResponse {
-  constructor(message = "Authentication Failure") {
-    super(StatusCode.FAILURE, ResponseStatus.UNAUTHORIZED, message);
-  }
-}
-
 export class NotFoundResponse extends ApiResponse {
   private url: string | undefined;
 
@@ -61,12 +51,6 @@ export class NotFoundResponse extends ApiResponse {
   send(res: Response): Response {
     this.url = res.req?.originalUrl;
     return super.prepare<NotFoundResponse>(res, this);
-  }
-}
-
-export class ForbiddenResponse extends ApiResponse {
-  constructor(message = "Forbidden") {
-    super(StatusCode.FAILURE, ResponseStatus.FORBIDDEN, message);
   }
 }
 
@@ -101,36 +85,5 @@ export class SuccessResponse<T> extends ApiResponse {
 
   send(res: Response): Response {
     return super.prepare<SuccessResponse<T>>(res, this);
-  }
-}
-
-export class AccessTokenErrorResponse extends ApiResponse {
-  private instruction = "refresh_token";
-
-  constructor(message = "Access token invalid") {
-    super(
-      StatusCode.INVALID_ACCESS_TOKEN,
-      ResponseStatus.UNAUTHORIZED,
-      message
-    );
-  }
-
-  send(res: Response): Response {
-    res.setHeader("instruction", this.instruction);
-    return super.prepare<AccessTokenErrorResponse>(res, this);
-  }
-}
-
-export class TokenRefreshResponse extends ApiResponse {
-  constructor(
-    message: string,
-    private accessToken: string,
-    private refreshToken: string
-  ) {
-    super(StatusCode.SUCCESS, ResponseStatus.SUCCESS, message);
-  }
-
-  send(res: Response): Response {
-    return super.prepare<TokenRefreshResponse>(res, this);
   }
 }

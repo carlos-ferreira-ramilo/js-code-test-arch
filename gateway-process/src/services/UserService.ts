@@ -5,11 +5,21 @@ import _ from "lodash";
 import { Socket } from "socket.io";
 
 export default class UserService {
+  /**
+   * Get the user by Id
+   * @param userId
+   * @returns If the user exists return Response User promise with success true. Success false with err in case not exists.
+   */
   async getUser(userId: string) {
     Logger.debug(`UserService.getUser ${userId}`);
     return await this.findUserInDbProcesses(userId);
   }
 
+  /**
+   * Create the user
+   * @param user
+   * @returns If the user exists return success false with err, else the user is created and returns success true.
+   */
   async createUser(user) {
     Logger.debug(`UserService.createUser ${JSON.stringify(user)}`);
     let findUserResult: any = await this.findUserInDbProcesses(user.id);
@@ -28,11 +38,21 @@ export default class UserService {
     return createResult;
   }
 
+  /**
+   * Partial update of the user
+   * @param user
+   * @returns If the user exists update the user and success true. Success false with err in case not exists.
+   */
   async updateUser(user) {
     Logger.debug(`UserService.updateUser ${JSON.stringify(user)}`);
     return await this.updateUserInDbProcesses(user);
   }
 
+  /**
+   * Delete the user
+   * @param userId
+   * @returns success true but false in case of db error.
+   */
   async deleteUser(userId: string) {
     Logger.debug(`UserService.deleteUser ${userId}`);
     return await this.deleteUserInDbProcesses(userId);
