@@ -44,6 +44,7 @@ Se tiene en cuenta que al optar por los websockets, el escalado que podremos apl
 
 ### Operación de lectura
 Se lanza la lectura sobre las réplicas de cada servidor (en caso de estar caído alguno de los db_process, se lanza sobre la partición primaria).
+
 ![read operation](resources/images/dbschemaread.png)
 
 ### Operaciones de actualización
