@@ -34,7 +34,7 @@ Los db_process usan rocksDB para la persistencia de los datos de usuarios. El si
 
 Cada proceso de base de datos contendrá su propia partición de base de datos, además de una réplica de la partición del proceso anterior. De este modo, si cae uno de los servidores, siempre tendremos una copia de respaldo en el servidor contiguo. Esto sigue siendo válido para n db_process:
 
-![n db-process](resources/images/dbschema.png)
+![n db-process](resources/images/dbscheman.png)
 
 En el caso de la inserción, se ha optado por distribuir los usuarios entre las instancias de db_process disponibles que haya, según el grupo del usuario, dando como precondición que los usuarios estén uniformemente repartidos según esta propiedad.
 
