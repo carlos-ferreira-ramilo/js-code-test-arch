@@ -34,7 +34,7 @@ Los db_process usan rocksDB para la persistencia de los datos de usuarios. El si
 
 Cada proceso de base de datos contendrá su propia partición de base de datos, además de una réplica de la partición del proceso anterior. De este modo, si cae uno de los servidores, siempre tendremos una copia de respaldo en el servidor contiguo. Esto sigue siendo válido para n db_process:
 
-![n db-process](resources/images/dbscheman.png)
+![n db-process](resources/images/dbschema.png)
 
 La comunicación entre el gateway y los db_process se ha implementado mediante websockets, concretamente con la librearía socket.io. Esta decisión se basa en el hecho de que va a haber una comunicación constante entre todos los elementos. Mientras en el servicio REST que el gateway publica, lo esperado es tener que múltiples cliente que se conectan y desconectan esporádicamente para realizar las opearaciones CRUD, la comunicación entre los elementos de la solución va a ser continua, por lo que mediante los websockets vamos a conseguir ahorrar tiempos de conexión cada vez que se produce una de estas comunicaciones recurrentes (https://blog.feathersjs.com/http-vs-websockets-a-performance-comparison-da2533f13a77).
 
@@ -71,6 +71,19 @@ Las operaciones de actualización se lanzan directamente sobre las particiones p
 	- Para parar la ejecución de Docker Compose:
 		
 		``` docker-compose down ``` 
+
+En el docker-composer.yaml se pueden configurar los puertos, que por defecto son 3001 para el servidor rest y 3002 para los websockets. Asimismo, se podrían definir volúmenes para mapear el directorio de rocksdb en los db-process. Otras variables de entorno que se podrían definir:
+
+ - gateway:
+	 - NODE_ENV: entorno. Por defecto: development (de podría cambiar a production para cambiar trazas de log)
+	 - LOG_DIR: ruta de los logs. Por defecto: logs
+	 - REST_PORT: puerto del servidor REST. Por defecto: 3001
+	 - SOCKET_PORT: puerto de websocket. Por defecto: 3002.
+ - db_process:
+	 - NODE_ENV: entorno. Por defecto: development (de podría cambiar a production para cambiar trazas de log)
+	 - LOG_DIR: ruta de los logs. Por defecto: logs
+	 - SOCKET_SERVER_URL: url del servidor websocket. Por defecto: ws://localhost:3002
+	 - DB_INSTANCE_ID: identificador de la instancia. Por defecto: db-0. No debe haber dos db-process con el mismo nombre
 
 ### gateway-process
 ![gateway](resources/images/gatewaytree.png)
