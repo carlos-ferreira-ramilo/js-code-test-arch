@@ -44,4 +44,26 @@ Se lanza la lectura sobre las réplicas de cada servidor (en caso de estar caíd
 ![enter image description here](knm)
 
 ### Operaciones de actualización
-Las operaciones de actualización se lanzan directamente sobre las particiones primarias.
+Las operaciones de actualización se lanzan directamente sobre las particiones primarias de forma síncrona con la respuesta del servicio REST, mientras se lanza de forma asíncrona la actualización en la parición secundaria.
+
+### Ejecución
+
+ - Creación de las imágenes:
+	 - gateway-process:
+		 - En la carpeta gateway-process hay un Dockerfile con el que se puede generar la imagen docker:
+		 - En la carpeta db-process hay un Dockerfile con el que se puede generar la imagen docker:
+- Docker-compose:
+	- Para lanzar la ejecución con Docker Compose, sobre la raíz del proyecto:
+		- docker-compose up -d
+	- Para parar un cotenedor para probar la resistencia a fallo de un servidor:
+		- docker-compose stop db-1; sleep 60; docker-compose start db-1;
+	- Para parar la ejecución de Docker Compose:
+		- docker-compose down
+
+
+## TODO:
+
+ - Tests
+ - Implementación de una operación de COUNT sobre los db_process
+ - Implementación de una operación LIST con paginación sobre los db_process
+ - Las actualizaciones en las particiones secundarias se podrían realizar entre los db_process en lugar de que sea el gateway el que las lance.
