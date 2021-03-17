@@ -25,15 +25,15 @@ La arquitectura contempla dos tipos de procesos:
  - gateway: es el proceso en el que reside el servicio REST.
  - db_process: n procesos que persisten los datos de usuario.
 
-![enter image description here](knm)
+![servers](resources/images/servers.png)
 
 Los db_process usan rocksDB para la persistencia de los datos de usuarios. El sistema debe soportar la caída de unos de los db_process, para ellos, se elige el siguiente esquema (en principio, se diseña para tres db_process):
 
-![enter image description here](knm)
+![3 db-process](resources/images/dbschema.png)
 
 Cada proceso de base de datos contendrá su propia partición de base de datos, además de una réplica de la partición del proceso anterior. De este modo, si cae uno de los servidores, siempre tendremos una copia de respaldo en el servidor contiguo. Esto sigue siendo válido para n db_process:
 
-![enter image description here](knm)
+![n db-process](resources/images/dbschema.png)
 
 La comunicación entre el gateway y los db_process se ha implementado mediante websockets, concretamente con la librearía socket.io. Esta decisión se basa en el hecho de que va a haber una comunicación constante entre todos los elementos. Mientras en el servicio REST que el gateway publica, lo esperado es tener que múltiples cliente que se conectan y desconectan esporádicamente para realizar las opearaciones CRUD, la comunicación entre los elementos de la solución va a ser continua, por lo que mediante los websockets vamos a conseguir ahorrar tiempos de conexión cada vez que se produce una de estas comunicaciones recurrentes (https://blog.feathersjs.com/http-vs-websockets-a-performance-comparison-da2533f13a77).
 
@@ -41,7 +41,7 @@ Se tiene en cuenta que al optar por los websockets, el escalado que podremos apl
 
 ### Operación de lectura
 Se lanza la lectura sobre las réplicas de cada servidor (en caso de estar caído alguno de los db_process, se lanza sobre la partición primaria).
-![enter image description here](knm)
+![read operation](resources/images/dbschemaread.png)
 
 ### Operaciones de actualización
 Las operaciones de actualización se lanzan directamente sobre las particiones primarias de forma síncrona con la respuesta del servicio REST, mientras se lanza de forma asíncrona la actualización en la parición secundaria.
@@ -51,16 +51,23 @@ Las operaciones de actualización se lanzan directamente sobre las particiones p
  - Creación de las imágenes:
 	 - gateway-process:
 		 - En la carpeta gateway-process hay un Dockerfile con el que se puede generar la imagen docker:
+			 docker build -t carlos_ferreira_ramilo/gateway-process .
 		 - En la carpeta db-process hay un Dockerfile con el que se puede generar la imagen docker:
+			 docker build -t carlos_ferreira_ramilo/db-process .
 - Docker-compose:
 	- Para lanzar la ejecución con Docker Compose, sobre la raíz del proyecto:
-		- docker-compose up -d
+		docker-compose up -d
 	- Para parar un cotenedor para probar la resistencia a fallo de un servidor:
-		- docker-compose stop db-1; sleep 60; docker-compose start db-1;
+		docker-compose stop db-1; sleep 60; docker-compose start db-1;
 	- Para parar la ejecución de Docker Compose:
-		- docker-compose down
+		docker-compose down
 
+### gateway-process
+![gateway](resources/images/gatewaytree.png)
 
+### db-process
+![db-process](resources/images/treedbprocess.png)
+        
 ## TODO:
 
  - Tests
