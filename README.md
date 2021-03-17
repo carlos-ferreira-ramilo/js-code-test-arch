@@ -96,4 +96,10 @@ En el docker-composer.yaml se pueden configurar los puertos, que por defecto son
  - Tests
  - Implementación de una operación de COUNT sobre los db_process
  - Implementación de una operación LIST con paginación sobre los db_process
- - Las actualizaciones en las particiones secundarias se podrían realizar entre los db_process en lugar de que sea el gateway el que las lance.
+ - Las actualizaciones en las particiones secundarias se podrían realizar entre los db_process en lugar de que sea el gateway el que las lance. Se podrían usar los Eventos disponibles al realizar operaciones sobre las partición primaria.
+ - Securización de los servicios
+
+## Otras consideraciones
+
+ - Se ha optado por usar la librería socket.io, ya que era suficiente para el objetivo de esta prueba, teniendo en consideración lo comentado en (https://www.npmjs.com/package/level-rocksdb):
+```Use this package to avoid having to explicitly install `rocksdb` when you want to use RocksDB with `levelup`. See also [`level`](https://github.com/Level/level) which does the same for LevelDB.```
