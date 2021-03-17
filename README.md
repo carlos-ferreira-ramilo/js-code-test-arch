@@ -36,7 +36,7 @@ Cada proceso de base de datos contendrá su propia partición de base de datos, 
 
 ![n db-process](resources/images/dbschema.png)
 
-La comunicación entre el gateway y los db_process se ha implementado mediante websockets, concretamente con la librearía socket.io. Esta decisión se basa en el hecho de que va a haber una comunicación constante entre todos los elementos. Mientras en el servicio REST que el gateway publica, lo esperado es tener que múltiples cliente que se conectan y desconectan esporádicamente para realizar las opearaciones CRUD, la comunicación entre los elementos de la solución va a ser continua, por lo que mediante los websockets vamos a conseguir ahorrar tiempos de conexión cada vez que se produce una de estas comunicaciones recurrentes (https://blog.feathersjs.com/http-vs-websockets-a-performance-comparison-da2533f13a77).
+La comunicación entre el gateway y los db_process se ha implementado mediante websockets, concretamente con la librearía socket.io. Esta decisión se basa en el hecho de que va a haber una comunicación constante entre todos los elementos. Mientras en el servicio REST que el gateway publica, lo esperado es tener múltiples clientes que se conectan y desconectan esporádicamente para realizar las opearaciones CRUD, la comunicación entre los elementos de la solución va a ser continua, por lo que mediante los websockets vamos a conseguir ahorrar tiempos de conexión cada vez que se produce una de estas comunicaciones recurrentes (https://blog.feathersjs.com/http-vs-websockets-a-performance-comparison-da2533f13a77).
 
 Se tiene en cuenta que al optar por los websockets, el escalado que podremos aplicar será un escalado vertical. En todo caso, si fuera necesario, se podría optar por un escalado horizontal de entrada en el REST del gateway, definiendo clusters con n db_process asociados a cada gateway.
 
@@ -53,16 +53,16 @@ Las operaciones de actualización se lanzan directamente sobre las particiones p
 	 - gateway-process:
 		 - En la carpeta gateway-process hay un Dockerfile con el que se puede generar la imagen docker:
 
-			```docker build -t carlos_ferreira_ramilo/gateway-process. ```
+			```docker build -t carlos_ferreira_ramilo/gateway-process . ```
 
-	- En la carpeta db-process hay un Dockerfile con el que se puede generar la imagen docker:
+		- En la carpeta db-process hay un Dockerfile con el que se puede generar la imagen docker:
 
-			```docker build -t carlos_ferreira_ramilo/db-process. ```
+			```docker build -t carlos_ferreira_ramilo/db-process .```
 
 - Docker-compose:
 	- Para lanzar la ejecución con Docker Compose, sobre la raíz del proyecto:
 
-			``` docker-compose up -d ```
+		``` docker-compose up -d ```
 			
 	- Para parar un cotenedor para probar la resistencia a fallo de un servidor:
 
@@ -71,6 +71,19 @@ Las operaciones de actualización se lanzan directamente sobre las particiones p
 	- Para parar la ejecución de Docker Compose:
 		
 		``` docker-compose down ``` 
+
+En el docker-composer.yaml se pueden configurar los puertos, que por defecto son 3001 para el servidor rest y 3002 para los websockets. Asimismo, se podrían definir volúmenes para mapear el directorio de rocksdb en los db-process. Otras variables de entorno que se podrían definir:
+
+ - gateway:
+	 - NODE_ENV: entorno. Por defecto: development (de podría cambiar a production para cambiar trazas de log)
+	 - LOG_DIR: ruta de los logs. Por defecto: logs
+	 - REST_PORT: puerto del servidor REST. Por defecto: 3001
+	 - SOCKET_PORT: puerto de websocket. Por defecto: 3002.
+ - db_process:
+	 - NODE_ENV: entorno. Por defecto: development (de podría cambiar a production para cambiar trazas de log)
+	 - LOG_DIR: ruta de los logs. Por defecto: logs
+	 - SOCKET_SERVER_URL: url del servidor websocket. Por defecto: ws://localhost:3002
+	 - DB_INSTANCE_ID: identificador de la instancia. Por defecto: db-0. No debe haber dos db-process con el mismo nombre
 
 ### gateway-process
 ![gateway](resources/images/gatewaytree.png)
@@ -83,4 +96,10 @@ Las operaciones de actualización se lanzan directamente sobre las particiones p
  - Tests
  - Implementación de una operación de COUNT sobre los db_process
  - Implementación de una operación LIST con paginación sobre los db_process
- - Las actualizaciones en las particiones secundarias se podrían realizar entre los db_process en lugar de que sea el gateway el que las lance.
+ - Las actualizaciones en las particiones secundarias se podrían realizar entre los db_process en lugar de que sea el gateway el que las lance. Se podrían usar los Eventos disponibles al realizar operaciones sobre las partición primaria.
+ - Securización de los servicios
+
+## Otras consideraciones
+
+ - Se ha optado por usar la librería socket.io, ya que era suficiente para el objetivo de esta prueba, teniendo en consideración lo comentado en (https://www.npmjs.com/package/level-rocksdb):
+```Use this package to avoid having to explicitly install `rocksdb` when you want to use RocksDB with `levelup`. See also [`level`](https://github.com/Level/level) which does the same for LevelDB.```
